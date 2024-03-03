@@ -2,11 +2,8 @@ const express = require('express');
 const tourController = require('../controllers/tourController');
 
 const router = express.Router();
-router.param('id', tourController.checkID);
-router
-  .route('/')
-  .get(tourController.getTours)
-  .post(tourController.checkBody, tourController.createTour);
+
+router.route('/').get(tourController.getTours).post(tourController.createTour);
 router
   .route('/:id')
   .get(tourController.getTour)
@@ -14,3 +11,6 @@ router
   .delete(tourController.deleteTour);
 
 module.exports = router;
+
+// Middleware param
+// router.param('id', tourController.checkID);
