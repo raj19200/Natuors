@@ -43,6 +43,11 @@ const userSchema = mongoose.Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: String,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
 });
 // Encryption of the password field
 userSchema.pre('save', async function (next) {
@@ -52,6 +57,12 @@ userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, 12);
   //Delete Password of confirm field
   this.confirmPassword = undefined;
+});
+
+//  Query Milddleware for filtering user data - dont show the user who are currently inactive
+userSchema.pre(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
+  next();
 });
 
 userSchema.pre('save', function (next) {
@@ -70,13 +81,15 @@ userSchema.methods.correctPassword = async function (
 };
 // Checking if password is changed after generating token
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
-  const changedTimestamp = parseInt(
-    this.passwordChangedAt.getTime() / 1000,
-    10,
-  );
   if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10,
+    );
+
     return JWTTimestamp < changedTimestamp;
   }
+
   return false;
 };
 
