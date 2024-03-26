@@ -7,7 +7,7 @@ const DB = process.env.DATABASE_URI.replace('<PASSWORD>', process.env.PASSWORD);
 mongoose.connect(DB).then(() => console.log('Databse connected successfully'));
 
 const tourData = JSON.parse(
-  fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8'),
+  fs.readFileSync(`${__dirname}/tours.json`, 'utf-8'),
 );
 
 const importData = async () => {

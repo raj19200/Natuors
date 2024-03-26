@@ -1,5 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
+const hpp = require('hpp');
+const mongoSanitize = require('express-mongo-sanitize');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const globalErrorHandler = require('./controllers/errorController');
@@ -24,6 +26,25 @@ app.use('/api', limiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
+
+// Data Sanitization against NoSQl query injection example - {"email":{$gt:""},"password":"pass123"} - able to login
+app.use(mongoSanitize());
+// Data Sanitization against xss
+
+// Prevent parameter pollution
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  }),
+);
+
 // Creating middleware to access static file in browser.
 app.use(express.static(`${__dirname}/public`));
 
