@@ -79,6 +79,35 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startLocation: {
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      adress: String,
+      description: String,
+    },
+    location: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        adress: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
@@ -95,6 +124,17 @@ tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
+
+// Below code is use to emabedding user data into tour document but we dont use it for this project but it is useful in some cases.
+// It is store all the user information into guides Arrays.
+// tourSchema.pre('save', async function (next) {
+//   const guidesPromises = this.guides.map(
+//     async (id) => await User.findById(id),
+//   );
+//   this.guides = await Promise.all(guidesPromises);
+//   next();
+// });
+
 /* tourSchema.post('save', (doc, next) => {
   console.log(doc);
   next();
