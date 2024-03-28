@@ -89,7 +89,7 @@ const tourSchema = new mongoose.Schema(
       adress: String,
       description: String,
     },
-    location: [
+    locations: [
       {
         type: {
           type: String,
@@ -143,6 +143,15 @@ tourSchema.pre('save', function (next) {
 // Query Middleware - excute before or after query
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
+  next();
+});
+
+// populate method is use to fetch details of the referance collection.
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
   next();
 });
 /* tourSchema.post('find', (doc, next) => {

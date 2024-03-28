@@ -4,6 +4,7 @@ const hpp = require('hpp');
 const mongoSanitize = require('express-mongo-sanitize');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 const rateLimit = require('express-rate-limit');
@@ -57,6 +58,7 @@ app.use((req, res, next) => {
 // Router
 app.use('/api/tours', tourRouter);
 app.use('/api/users', userRouter);
+app.use('/api/review', reviewRouter);
 
 // Unhandled Roter - if user specify something else than the actual route then we show this msg to them.
 
